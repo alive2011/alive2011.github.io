@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- <script src="js/jquery.min.js"></script> -->
+	<script
+  src="https://code.jquery.com/jquery-1.12.4.js"
+  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+	<script>
+		const body = document.querySelector('body');
+		const str = 'Hello World.';
+
+		const str2 = 'PPT模板制作？';
+		const template = `<div>${str}</div>`;
+		body.innerHTML = template;
+
+var userHelper={
+	name: ['solo','sala'],
+	friends: ['小明','小王'],
+	getName: function() { 
+		var _this = this;
+
+		this.friends.forEach((item,index) => {
+ 			console.log(this.name[index]);
+		});
+	}
+}  
+
+userHelper.getName();
+	</script>
+</body>
+</html>
