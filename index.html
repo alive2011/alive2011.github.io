@@ -1,36 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<!-- <script src="js/jquery.min.js"></script> -->
-	<script
-  src="https://code.jquery.com/jquery-1.12.4.js"
-  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
-  crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue相关的使用笔记</title>
+  <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+  <style>
+    body {
+      padding: 40px;
+    }
+    ul li {
+      list-style: none;
+    }
+    ol li {
+      font-size: 12px;
+      color: #777;
+    }
+    p {
+      margin: 2px 0 10px 20px;
+      color: #999;
+    }
+    pre {
+      color: red;
+    }
+    section > div {
+      position: relative;
+      margin-bottom: 60px;
+    }
+    section > div::after {
+      content: '';
+      width: 100%;
+      height: 1px;
+      position: absolute;
+      left: 0;
+      bottom: -20px;
+      background: blue;
+    }
+  </style>
 </head>
 <body>
-	<script>
-		const body = document.querySelector('body');
-		const str = 'Hello World.';
+  <h1>Vue及相关的笔记 <small>以下基于慕课实战项目 mt-app</small></h1>
+  <p>笔记时间：2018年11月13日 10:00:00</p>
+  <h4>包名以及对应版本：<small>(具体版本号需进项目里查看)</small></h4>
+  <ol id="depArr">
+  </ol>
+  <section>
+    <h2>VUE基础</h2>
+    <div>
+      <h5>安装</h5>
+      <pre>
+        vue-cli@3 -> npm i -g @vue/cli
+        创建项目：vue create projectName
+      </pre>
+    </div>
+    <div>
+      <h5>模板语法</h5>
+      <pre>
+        {{ 变量或者表达式 }}
+        如果变量或者表达式中存在html标签，且需要正常展示该标签，则使用v-html
+        <div v-html="变量"></div>
 
-		const str2 = 'PPT模板制作？';
-		const template = `<div>${str}</div>`;
-		body.innerHTML = template;
+        特性绑定及缩写
+        <span v-bind:id="变量"></span>
+        <span :id="变量"></span>
+      </pre>
+      <h5>自定义指令</h5>
+      <pre>
+        什么时候用自定义指令：对数据进行处理，不是一个表达式就能解决的，但是没有上升到需要一个组件的程度
+        例：（使用的时候， import '../n'）
+        import Vue from 'vue'
+        Vue.directive('deName', {
+          bind: function(el,binding) {
+            // 2次方
+            el.textContent = Math.pow(binding.value,2)
+          },
+          update: function(el,bindng) {
+            el.textContent = Math.pow(binding.value,2)
+          },
+        })
+      </pre>
+    </div>
+    <div>
+      <h5>带数据分组或数据过滤的遍历</h5>
+      <pre>
+        <ul>
+          <template v-for="(item,index) of list">
+            <li
+              v-if="index < 2"
+              :key="item">{{ item }}</li>
+          </template>
+        </ul>
+      </pre>
+      <h5>事件方法及事件修饰符</h5>
+      <pre>
+        获取事件对象
+        <div @click="msg('s', $event)">
+          click：function(str, domobj) {
+          }
+        </div>
 
-var userHelper={
-	name: ['solo','sala'],
-	friends: ['小明','小王'],
-	getName: function() { 
-		var _this = this;
+        事件修饰符主要阻止事件冒泡与默认行为
+        <!-- 阻止单击事件继续传播 -->
+        <a @click.stop="doThis"></a>
+        <!-- 提交事件不再重载页面 -->
+        <form @submit.prevent="onSubmit"></form>
 
-		this.friends.forEach((item,index) => {
- 			console.log(this.name[index]);
-		});
-	}
-}  
+        按键修饰符
+        <!-- 只有在 `keyCode` 是 13 时调用 `vm.submit()` -->
+        <input v-on:keyup.13="submit">
+      </pre>
+    </div>
+    <div>
+      <h5>组件</h5>
+      <pre>
+        父组件传递数据给子组件 props
 
-userHelper.getName();
-	</script>
+        ----子组件----
+        定义组件名为： childcomponent
+          <p>{{ age }}</p>  // 此处显示为父组件中的 toChild 18
+          不指定类型 -> props: ['age']
+            指定类型 -> props: { age: Number }
+        -------------
+        ====父组件====
+        template  ->  &lt;childcomponent :age="toChild"/>
+
+        import childcomponent from './childcomponent'
+        components: {
+          childcomponent
+        },
+        data() {
+          return {
+            toChild: 18
+          }
+        }
+        ====================================================================
+
+        子组件给父组件传递
+        
+        ----子组件----
+        这里$emit() 中的name 为 父组件接收时候的方法
+        <button type="button" @click="$emit('max', 34)">通过@event="$emit(name, data)"发送到父组件</button>
+
+        ====父组件====
+        需要在父组件的methods中定一个方法来接收
+        例子：
+        子组件发送到父组件： 子组件为上方的 $emit('max', 34) 注意子组件的'max'与父组件的方法@max
+        父组件接收请求         <child-component @max="parent"/>
+        methods: {
+          parent: function(data) {
+            console.log(data)  //34
+          }
+        }
+      </pre>
+      <div>
+        <h5>组件Slot</h5>
+        <pre>
+          插槽slot
+          根据需要的位置 可以放单个也可以放多个，
+          放多个的时候必须给slot增加一个name属性，值为不同
+          同时在别的组件使用slot的时候也必须分配属性 slot="name的值"
+
+          以下为组件：
+          <template>
+            <slot name="slot-a"></slot>
+            <h1>组件内容</h1>
+            <slot name="slot-b"></slot>
+          </template>
+
+          引入并使用带slot的组件必须用以下的写法，多个插槽还必须指定slot值：
+          <com-component>
+            <h1 slot="slot-a">使用slot</h1>
+          </com-component>
+        </pre>
+      </div>
+    </div>
+    <div>
+      <h2>VUEX</h2>
+      <div>
+        <h5>VUEX基础</h5>
+        <pre>
+          vuex: 解决多个组件之间共用一份数据 ($store.state.
+
+          state: 就要共用的数据本体 如： count = 1
+          mutations: 用来改变state数据的手段，也是唯一个能改变state数据的手段
+          actions: 向mutations发送请求，使其改变state数据, 可以是异步操作(promise)
+          三者的关系：actions(发送修改请求) --> mutations(收到请求，修改state) --> state(数据本体)
+        </pre>
+      </div>
+      <div>
+        <h5>一个标准的VUEX，一个项目有多个vuex store(modules)，导出时必须使用命名空间</h5>
+        <pre>
+          //----- 多个vuex store中的一个 moduleA.js -----
+
+          const state = {
+            count: 1
+          }
+          const mutations = {
+              increment(state){
+              state.count++
+            },
+            decrement(state) {
+              state.count--
+            },
+            setState(state, param) { // param 为组件使用时可传入参数, 这时为actions转发进来
+              state.count = param
+            }
+          }
+          const actions = {
+            // 使用该store的组件 mapActions 的方法名需要与此方法名一致
+            plus: ({ commit }) => {
+              // commit里面的名字与上面 mutations 里的方法要对应。
+              commit('increment');
+            },
+            mainasu: ({ commit }) => {
+              commit('decrement');
+            },
+            set: ({commit}, param) => { // param 为组件使用时可传入参数
+              commit('setState', param)
+            }
+          }
+          // 导出
+          export default new Vuex.Store({
+            namespaced: true,  // 命名空间
+            state, 
+            mutations, 
+            actions
+          })
+
+
+        //===== 汇总文件 vuex-index.js =====
+
+          // 安装后导入
+          import Vue from 'vue';
+          import Vuex from 'vuex';
+          // 使用
+          Vue.use(Vuex)
+          // 导入 store (money为自定义命名，作为组件使用该store的标志)
+          import money from './moduleA.js'
+          // 导出供组件使用
+          export default new Vuex.Store({
+            modules: {
+              money
+            }
+          })
+        </pre>
+      </div>
+      <div>
+        <h5>在组件中使用VUEX</h5>
+        <pre>
+          在template中使用： {{ $store.state.money.count }}
+          // 通过vuex包中的 mapActions 影射上面定义的vuex中的actions
+          import { mapActions } from 'vuex'
+          export default {
+            // 假设要使用的vuex模式的名字空间为'money‘
+            methods: {
+              // 好好学习下该写法 (结构运算符)
+              ...mapActions('money',[
+                // 这里的字段，需要与vuex中的actions的方法名一致， 此处为上方的：plus, mainasu, set
+                'plus',
+                'mainasu',
+                'set'
+              ]),
+              change() {
+                script 中使用： this.$store.state.money.count
+==============  使用mapActions中的方法：this.set(3)  3为参数
+              }
+            }
+          }
+          触发方式为事件触发：
+          例：<button @click="plus">plus</button>
+        </pre>
+      </div>
+    </div>
+  </section>
+
+<script>
+  var pres = document.querySelectorAll('pre')
+      pres.forEach((item,i) => {
+        pres[i].innerHTML=pres[i].innerHTML.replace(/</g, '&lt;')
+        pres[i].innerHTML=pres[i].innerHTML.replace(/>/g, '&gt;')
+      })
+  // 第三方包
+  var dependencies = `
+    "vue": "2.5",
+    "@nuxtjs/axios": "5.0.0",
+    "babel-preset-es2015": "6.24.1",
+    "cross-env": "5.2.0",
+    "crypto-js": "3.1.9-1",
+    "element-ui": "2.4.6",
+    "js-pinyin": "0.1.9",
+    "koa": "2.5.2",
+    "koa-bodyparser": "4.2.1",
+    "koa-generic-session": "2.0.1",
+    "koa-json": "2.0.2",
+    "koa-passport": "4.1.1",
+    "koa-redis": "3.1.2",
+    "koa-router": "7.4.0",
+    "koa2-cors": "2.0.6",
+    "lodash": "4.17.11",
+    "mongoose": "5.3.4",
+    "node-sass": "4.9.4",
+    "nodemailer": "4.6.8",
+    "nuxt": "2.0.0",
+    "passport-local": "1.0.0",
+    "sass-loader": "7.1.0"`;
+  var depArr = dependencies.split(',')
+  var ol = document.getElementById('depArr')
+  for (let i = 0; i < depArr.length; i++) {
+    const li = document.createElement('li')
+          li.textContent = depArr[i]
+    ol.append(li)
+  }
+</script>
 </body>
 </html>
