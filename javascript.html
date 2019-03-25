@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>JavaScript相关的知识整理</title>
+    <style>
+      body {
+        padding: 0 0 200px 0;
+        margin: 0;
+        color: #333;
+      }
+      h1 {
+        text-align: center;
+      }
+      .section {
+        border-bottom: 1px solid #eee;
+      }
+      .content {
+        padding-left: 30px;
+      }
+      pre,
+      code {
+        padding: 10px 0 0 0;
+        background: #e0e0e0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 title="JavaScript相关的知识整理">JavaScript相关的知识整理</h1>
+
+    <!-- DOM 事件 -->
+    <section class="section">
+      <h2>DOM 事件</h2>
+      <div class="content">
+        <div class="item">
+          <h5>DOM 事件级别</h5>
+          <div class="detail">
+            <pre>
+            DOM0  element.onclick = function() {} 
+            // DOM2 DOM3  第三个参数 默认false 表示冒泡触发, true为捕获触发
+            DOM2  element.addEventListener('click', function(){}, false)
+            // DOM3 主要是事件类型增加了很多
+            DOM3  element.addEventListener('keyup', function(){}, false)
+          </pre
+            >
+          </div>
+        </div>
+        <div class="item">
+          <h5>DOM 事件流</h5>
+          <div class="detail">
+            <pre>
+              一个完整的事件流分为三个阶段:
+              1. 捕获阶段 (捕获往下到目标元素)
+              2. 目标阶段 (目标元素)
+              3. 冒泡阶段 (从目标元素向上)
+            </pre>
+          </div>
+        </div>
+        <div class="item">
+          <h5>DOM 事件捕获的具体流程</h5>
+          <div class="detail">
+            <pre>
+              由上往下:
+              window > document > html > body > ... > 目标元素
+              冒泡则相反
+              通过js获取html节点: document.documentElement
+            </pre>
+          </div>
+        </div>
+        <div class="item">
+          <h5>Event 对象的常见应用</h5>
+          <div class="detail">
+            <pre>
+              // 阻止默认事件, 如a标签的跳转
+              event.preventDefault()
+              // 阻止冒泡
+              event.stopPropagation()
+              // 如果一个element中绑定了多个事件, 通过该方则不会再次往下执行
+              event.stopImmediatePropagation()
+              // 以下常用于事件代理, 子元素被点击, 反应到父元素上, 常用于li被点击, 但是只在ul上写一个事件
+              element.currentTarge
+              element.target
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>自定义事件</h5>
+          <div class="detail">
+            <pre>
+              let eve = new Event('test')
+              DOMObject.addEventListener('test', ev => {
+                console.log('自定义事件 test')
+              }, false)
+              // 触发
+              DOMObject.dispatchEvent(eve) // 注意这里是事件对象, 不是事件名
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 类型转换 -->
+    <section>
+      <!-- 大主题 -->
+      <h2>类型转换</h2>
+      <div class="content">
+        <!-- item 根据内容可以有复数个 -->
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>数据类型</h5>
+          <div class="detail">
+            <pre>
+              最新的ECMAScript定义是7种数据类型
+              原始类型: Boolean Undefined Null Number String Symbol
+              对象: Object
+            </pre>
+          </div>
+        </div>
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>显式类型转换</h5>
+          <div class="detail">
+            <pre>
+              主动调用: Number、String、Boolean 函数
+              特别注意： Number(null) // 0 Number(undefined) // NaN
+            </pre>
+          </div>
+        </div>
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>隐式类型转换</h5>
+          <div class="detail">
+            <pre>
+              [] + []  // ""
+              [] + {}  // "[object Object]"
+              {} + []  // 0
+              {} + {}  // "[object Object][object Object]"   这个是在chrome中的结果
+              true + true // 2
+              1 + {a:1} // "1[object Object]"
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- http协议类-->
+    <section>
+      <!-- 大主题 -->
+      <h2>HTTP协议类</h2>
+      <div class="content">
+        <!-- item 根据内容可以有复数个 -->
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>http协议的主要特点</h5>
+          <div class="detail">
+            <pre>
+              1.简单快速  每个资源的URI都是固定的
+              2.灵活  在每个http协议中的头部都会有一个数据类型通过一个HTTP协议就能完成不同类型的数据传输
+              3.无连接  连接一次就会断掉, 不会保持连接
+              4.无状态  单从http协议是无法区别2次连接者的身份的
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>http报文的组成部分</h5>
+          <div class="detail">
+            <pre>
+              请求报文: 请求行 请求头 空行 请求体
+              响应报文: 状态行 响应头 空行 响应体
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>http方法</h5>
+          <div class="detail">
+            <pre>
+              GET: 获取资源
+              POST: 传输资源
+              PUT: 更新资源
+              DELETE: 删除资源
+              HEAD: 获得报文首部
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>GET和POST的区别</h5>
+          <div class="detail">
+            <pre>
+              GET在浏览器回退时是无害的，而POST会再次提交请求。
+              GET产生的URL地址可以被收藏，而POST不可以。
+              GET请求会被浏览器主动cache，而POST不会，除非手动设置。
+              GET请求只能进行url编码，而POST支持多种编码方式。
+              GET请求参数会被完整保留在浏览器历史记录里，而POST中的参数不会被保留。
+              GET请求在URL中传送的参数是有长度限制的，而POST没有。
+              对参数的数据类型，GET只接受ASCII字符，而POST没有限制。
+              GET比POST更不安全，因为参数直接暴露在URL上，所以不能用来传递敏感信息。
+              GET参数通过URL传递，POST放在Request body中。
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>HTTP状态码</h5>
+          <div class="detail">
+            <pre>
+              1XX 提示信息
+              2XX 成功
+              3XX 重定向
+                301 永久重定向
+                302 临时重定向
+                304 客户端有可用缓存, 无需向服务器再次请求
+              4XX 客户端错误
+                400 客户端请求语法有错误(比如把GET方法, 写成POST)
+                403 Forbidden 禁止访问
+                404 Not Found 请求的资源不存在
+              5XX 服务端错误
+            </pre>
+          </div>
+        </div>
+      </div>
+
+    <section>
+      <!-- 原型链 -->
+      <h2>原型链</h2>
+      <div class="content">
+        <!-- item 根据内容可以有复数个 -->
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>创建对象的几种方法</h5>
+          <div class="detail">
+            <pre>
+              1.  字面量方式
+                  var o1 = {a: 1}
+                  var o11 = new Object({a: 1})
+
+              2.  通过构造函数
+                  var M = function() { this.a = 1 }
+                  var o2 = new M()
+
+              3.  通过 Object.create(), 特别注意该方式创建对象时, 如果传入一个对象(实例), 则该对象会拥有该实例的原型
+                  function Fn() {
+                    this.name = '张三'
+                  }
+                  Fn.prototype.showName = function() {
+                    return this.name
+                  }
+                  var o3 = Object.create(new Fn())
+                  则此时, o3 直接拥有了构造函数中的name属性, 以及原型上的showName方法
+
+                  普通创建的时候, 可以直接传入null // Object.create(null)
+            </pre>
+          </div>
+        </div>
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>原型 构造函数 实例 原型链</h5>
+          <div class="detail">
+            <pre>
+              构造函数
+                凡是通过new来操作后面的函数,这个函数就是一个构造函数, 函数只要被new就叫构造函数, new后会生成一个实例
+              原型是什么?
+                每个函数都有一个prototype属性, 这个prototype就是原型对象(可能通过console.dir(fn) 来查看)
+              什么是原型链？
+                原型链是实现继承的主要方法。其基本思想是：利用原型让一个引用类型继承另一个应用类型的属性和方法。
+              实例是什么？
+                实例如上所说，就是通过new构造函数生成出来的
+              构造函数，原型，实例它们之间的关系？
+                1. new 构造函数 -- 生成 --> 实例
+                2. 实例.__proto__ -->引用 构造函数.prototype
+                3. 构造函数.prototype.constructor === 构造函数本身
+              原型链
+                  原型链的形成是靠 __proto__ 而不是prototype 
+                  当JS引擎执行对象的属性方法时，先查找对象本身是否存在该方法
+                  如果不存在，会在原型链上查找，在原型链找不到才会查找prototype。
+                  继承的时候查找(type)的顺序: A为最顶层类 B 为子类(B extends A) c 为 实例
+                    查找c.type
+                    查找顺序: c.type => B.type => A.type => B.prototype.type => A.prototype.type
+                    最后都没找到则返回undefined
+
+                  一个对象的 __proto__ 记录着自己的原型链，决定了自身的数据类型，改变 __proto__ 就等于改变对象的数据类型。
+                  函数的 prototype 不属于自身的原型链，它是创建子类的核心，决定了子类的数据类型，是连接子类原型链的桥梁。
+                  在原型对象(prototype)上定义方法和属性，是为了被子类继承和使用。
+              例:
+                function Fn() {
+                  this.type = 'Fn this.type'
+                }
+                Fn.prototype.type = 'Fn prototype.type'
+                let fn = new Fn()
+                console.log(fn.type) // Fn this.type 如果Fn() 内部没有定义this.type 则会去查找Fn.prototype中的type
+              ---------------------------------------------
+              1. M 是构造函数, o3 是实例, 函数才有prototype的属性, 对象是没有的, 实例对象有__proto__属性(函数也有是因为函数也是对象)
+              let M = function(name) {
+                this.name = name
+              }
+              let o3 = new M('o3')
+              2. 构造函数的prototype.constructor 指向构造函数本身
+                  M.prototype.constructor === M // true
+              3. 实例的__proto__与构造函数的 prototype(原型对象) 全等于(引用)
+                  o3.__proto__ === M.prototype  //  true
+            
+              判断该实例是不是该构造函数生成的, 用 constructor 而不是用 instanceof
+              o3.constructor === M  // true
+              o3.constructor === Object // false
+
+              构造函数是无法访问自己的prototype的, 只能供实例对象使用, 如:
+              M.prototype.text = 'Test text'
+              console.log(M.text) // undefined
+              console.log(o3.text) // 'Test text'
+
+
+            </pre>
+          </div>
+        </div>
+
+
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>new 运算符</h5>
+          <div class="detail">
+            <pre>
+              1. 创建一个新的对象
+              2. 将构造函数的作用域赋给新对象(this的指向)
+              3. 执行构造函数中属性与方法 (为新对象添加属性与方法)
+              4. 返回新对象
+              结合上面, 用代码来写就是
+              var new2 = function(func) {
+                let o = {}
+                o.__proto__ = func.prototype
+                let result = func.call(o)
+                return typeof result === 'object' ? result : o
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section>
+      <!-- 大主题 -->
+      <h2>面向对象OOP</h2>
+      <div class="content">
+        <!-- item 根据内容可以有复数个 -->
+        <div class="item">
+          <!-- 小主题 -->
+          <h5>类与继承</h5>
+          <div class="detail">
+            <pre>
+              // ES5 中类的实现
+              function Animal() {
+                this.name = 'cat'
+                this.state = {
+                  count: 1
+                }
+              }
+              // 实例化方法
+              new Animal()
+
+              // 类的继承
+              1. 构造函数方法继承, 弊端, 只能拿到父类构造函数中定义好的属性与方法, 父类上的prototype添加的属性与方法无法继承
+              function Cats() {
+                Animal.call(this) // apply  传入this改变父类的this指向
+                this.type = 'child1'
+              }
+              如:  
+                Animal.prototype.walk = 'foot'
+                new Cats.walk // undefined
+              
+              2. 借助原型链实现继承
+              function Cats() {
+                this.type = 'child2'
+              }
+              Cats.prototype = new Animal()
+              这样父类prototype添加属性与方法, 子类也能继承了,
+              弊端, 如果子类生成了多个实例, 如果某个子类改变了 父类 父类 父类prototype中的值(指数组或对象, 字符串和数字不会), 另一个子类也会跟着改变, 因为它们引用的是同一个prototype
+              如:
+                let s1 = new Cats()
+                let s2 = new Cats()
+                    s1.state.count = 2 // 重新赋值了, 这时候, s2.state.count也会改变为2
+
+              
+              3. 组合继承最终优化解决方案
+              function Cats() {
+                // 第一步
+                Animal.call(this)
+                this.type = 'child3'
+              }
+              // 第二步, 注意只能通过 Object.create()
+              Cats.prototype = Object.create(Animal.prototype)
+              // 第三步 为子类添加自己的constructor(构造函数)
+              Cats.prototype.constructor = Cats
+
+
+              // 以下为ES6写法 -----------------------------------
+
+              // 父类, 如果在属性或方法前添加 static 修饰词, 则该方法或属性只能在该类的内部使用, 实例与子类都无法使用
+              class Animal {
+                // 属性可以添加在最顶层, 注意这里不需要写上this
+                static test = 'Test text'
+                constructor() {
+                  // 属性也可以定义在constructor里, 这里需要添加上this
+                  this.name = 'Animal'
+                }
+                sayHi() {
+                  return 'hi'
+                }
+              }
+              // 添加属性和方法
+              Animal.prototype.food = 'Grass'
+
+              // 继承
+              class Cats extends Animal {
+                constructor() {
+                  // 必须主动调用super方法
+                  super()
+                  this.type = 'cat'
+                  this.food = 'fish'
+                }
+              }
+
+              //实例化
+              let cat = new Cats()
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <!-- 大主题 -->
+      <h2></h2>
+      <div class="content">
+        <!-- item 根据内容可以有复数个 -->
+        <div class="item">
+          <!-- 小主题 -->
+          <h5></h5>
+          <div class="detail"></div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
